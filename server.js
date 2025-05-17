@@ -4,7 +4,10 @@ const cors = require('cors');
 const sequelize = require('./config/dbConfig');
 const gradeRoutes = require('./routers/gradeRoute');
 const courseRoutes = require('./routers/courseRoute');
-const personRoutes = require('./routers/personRoute')
+const personRoutes = require('./routers/personRoute');
+const userRoutes = require('./routers/userRoute');
+const studentRoutes = require('./routers/studentRoute');
+const scheduleRoutes = require('./routers/scheduleRoute');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +19,9 @@ app.use(express.json());
 app.use('/api', gradeRoutes);
 app.use('/api', courseRoutes);
 app.use('/api', personRoutes);
+app.use('/api', userRoutes);
+app.use('/api', studentRoutes);
+app.use('/api', scheduleRoutes);
 
 // Sincronizar base de datos y servidor
 sequelize.authenticate()

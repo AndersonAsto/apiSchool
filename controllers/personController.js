@@ -1,4 +1,7 @@
+const { Op } = require('sequelize');
 const Person = require('../models/personModel');
+const User = require('../models/userModel');
+const Student = require('../models/studentModel');
 
 exports.createPerson = async (req, res) => {
     try {
@@ -17,6 +20,48 @@ exports.getPersons = async (req, res) => {
         res.json(persons);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener personas' });
+    }
+}
+
+exports.getAvailablePersonsForRol = async (req, res) => {
+    try {
+        const users = await User.findAll({ attributes: ['persona_id'] });
+        const personasConRol = users.map(user => user.persona_id);
+
+        const personasDisponibles = await Person.findAll({
+            where: {
+                id: {
+                    [Op.notIn]: personasConRol,
+                }
+            },
+            attributes: ['id', 'nombre', 'apellido']
+        });
+
+        res.status(200).json(personasDisponibles);
+    } catch (error) {
+        console.error("Error al obtener personas disponibles:", error);
+        res.status(500).json({ message: "Error al obtener personas disponibles" });
+    }
+}
+
+exports.getAvailablePersonsForStudent = async (req, res) => {
+    try {
+        const students = await Student.findAll({ attributes: ['alumno_id'] });
+        const personasEstudiantes = students.map( s => s.alumno_id );
+
+        const personasDisponibles = await Person.findAll({
+            where: {
+                id: {
+                    [Op.notIn]: personasEstudiantes,
+                }
+            },
+            attributes: ['id', 'nombre', 'apellido']
+        });
+
+        res.status(200).json(personasDisponibles);
+    } catch (error) {
+        console.error("Error al obtener personas disponibles para estudiante:", error);
+        res.status(500).json({ message: "Error al obtener personas disponibles para estudiante" });
     }
 }
 
