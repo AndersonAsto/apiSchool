@@ -23,6 +23,10 @@ app.use('/api', userRoutes);
 app.use('/api', studentRoutes);
 app.use('/api', scheduleRoutes);
 
+app.get('/', (req, res) => {
+  res.send('🚀 App Node.js corriendo correctamente');
+});
+
 // Sincronizar base de datos y servidor
 sequelize.authenticate()
   .then(() => {
