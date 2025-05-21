@@ -65,23 +65,6 @@ exports.getAvailablePersonsForStudent = async (req, res) => {
     }
 }
 
-exports.deletePersonById = async (req, res) => {
-    try {
-        const {id} = req.params;
-        const deleted = await Person.destroy({where: {id}});
-
-        if(deleted) {
-            res.status(200).json({ message: 'Persona eliminada correctamente' });
-        } else {
-            res.status(404).json({ message: 'Persona no encontrada' });
-        }
-        
-    } catch (error) {
-        console.error('Error al eliminar persona: ', error)
-        res.status(500).json({ message: 'Error al eliminar persona', error });
-    }
-}
-
 exports.updatePerson = async (req, res) => {
     const {id} = req.params;
     const { nombre, apellido, dni, correo, telefono } = req.body;
@@ -102,5 +85,22 @@ exports.updatePerson = async (req, res) => {
         res.status(200).json(person);
     } catch (error) {
         res.status(500).json({ message: "Error al actualizar persona", error });
+    }
+}
+
+exports.deletePersonById = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const deleted = await Person.destroy({where: {id}});
+
+        if(deleted) {
+            res.status(200).json({ message: 'Persona eliminada correctamente' });
+        } else {
+            res.status(404).json({ message: 'Persona no encontrada' });
+        }
+        
+    } catch (error) {
+        console.error('Error al eliminar persona: ', error)
+        res.status(500).json({ message: 'Error al eliminar persona', error });
     }
 }
