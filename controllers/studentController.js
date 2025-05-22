@@ -28,13 +28,33 @@ exports.getStudents = async (req, res) => {
                     attributes: ['id', 'nombre']
                 },
             ],
-            attributes: ['id', 'estado']
+            attributes: ['id', 'estado', 'createdAt', 'updatedAt']
         });
 
         res.status(200).json(students);
     } catch (error) {
         console.error("Error al obtener estudiantes:", error);
         res.status(500).json({ message: "Error al obtener estudiantes", error });
+    }
+}
+
+exports.updateStudent = async (req, res) => {
+    const { id } = req.params;
+    const { alumno_id, grado_id } = req.body;
+
+    try {
+        const student = await Student.findByPk(id);
+        if(!student) {
+            return res.status(404).json({message: "Estudiante no encontrado"});
+        }
+
+        student.alumno_id = alumno_id;
+        student.grado_id = grado_id;
+        await student.save();
+
+        res.status(200).json(student);
+    } catch (error) {
+        res.status(500).json({ message: "Error al actualizar estudiante", error });
     }
 }
 
