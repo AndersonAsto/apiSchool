@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/dbConfig');
 const Person = require('./personModel');
+const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 10;
 
 const User = sequelize.define('User', {
   id: {
@@ -41,6 +43,18 @@ const User = sequelize.define('User', {
 User.belongsTo(Person, {
   foreignKey: 'persona_id',
   as: 'persona',
+});
+
+User.beforeCreate(async (user, options) => {
+  if (user.password_hash) {
+    user.password_hash = await bcrypt.hash(user.password_hash, SALT_ROUNDS);
+  }
+});
+
+User.beforeUpdate(async (user, options) => {
+  if (user.changed('password_hash')) {
+    user.password_hash = await bcrypt.hash(user.password_hash, SALT_ROUNDS);
+  }
 });
 
 module.exports = User;

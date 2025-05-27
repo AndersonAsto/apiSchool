@@ -42,12 +42,36 @@ exports.getSchedules = async (req, res) => {
                     attributes: ['id', 'nombre']
                 }
             ],
-            attributes: ['id', 'fecha', 'hora_inicio', 'hora_fin', 'estado']
+            attributes: ['id', 'fecha', 'hora_inicio', 'hora_fin', 'estado', 'createdAt', 'updatedAt']
         });
         res.status(200).json(schedules);
     } catch (error) {
         console.error("Error al obtener horarios:", error);
         res.status(500).json({ message: "Error al obtener horarios", error });
+    }
+}
+
+exports.updateSchedule = async (req, res) => {
+    const { id } = req.params;
+    const { docente_id, curso_id, grado_id, fecha, hora_inicio, hora_fin } = req.body;
+
+    try {
+        const schedule = await Schedule.findByPk(id);
+        if(!schedule) {
+            return res.status(404).json({message: "Horario no encontrado"});
+        }
+
+        schedule.docente_id = docente_id;
+        schedule.curso_id = curso_id;
+        schedule.grado_id = grado_id;
+        schedule.fecha = fecha;
+        schedule.hora_inicio = hora_inicio;
+        schedule.hora_fin = hora_fin;
+        await schedule.save();
+
+        res.status(200).json(schedule);
+    } catch (error) {
+        res.status(500).json({ message: "Error al actualizar horario", error });
     }
 }
 

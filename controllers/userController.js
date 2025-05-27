@@ -5,7 +5,11 @@ exports.createUser = async (req, res) => {
     try {
         const {persona_id, username, password_hash, rol} = req.body;
         const newUser = await User.create({persona_id, username, password_hash, rol});
-        res.status(201).json(newUser);
+        
+        const userResponse = newUser.toJSON();
+        delete userResponse.password_hash;
+
+        res.status(201).json(userResponse);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al crear usuario' });
@@ -33,9 +37,9 @@ exports.getUsers = async (req, res) => {
 exports.getOnlyTeachers = async (req, res) => {
     try {
         const teachers = await User.findAll({
-            where: {rol: 'docente'},
+            where: {rol: 'Docente'},
             include: {
-                model:Person,
+                model: Person,
                 as: 'persona',
                 attributes: ['nombre', 'apellido']
             },
