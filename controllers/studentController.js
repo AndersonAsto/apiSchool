@@ -73,3 +73,33 @@ exports.deleteStudentById = async (req, res) => {
         res.status(500).json({ message: 'Error al eliminar estudiante', error });
     }
 }
+
+exports.getStudentsByGrade = async (req, res) => {
+    const { gradeId } = req.params;
+    try {
+        const students = await Student.findAll({
+            where: { grado_id: gradeId, estado: true},
+            include: [
+                {
+                    model: Person,
+                    as: 'alumno',
+                    attributes: ['id', 'nombre', 'apellido']
+                }
+            ],
+            attributes: ['id', 'estado']
+        });
+        if(students.length === 0) {
+            return res.status(200).json([]);
+        }
+        const formatted = students.map((student) =>({
+            id: student.id,
+            alumno_id: student.alumno.id,
+            nombre: student.alumno.nombre,
+            apellido: student.alumno.apellido
+        }));
+        res.status(200).json(formatted);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener alumnos por grado' });
+    }
+}

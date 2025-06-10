@@ -9,6 +9,7 @@ const userRoutes = require('./routers/userRoute');
 const studentRoutes = require('./routers/studentRoute');
 const scheduleRoutes = require('./routers/scheduleRoute');
 const authRoutes = require('./routers/authRoute');
+const qualificationRoutes = require('./routers/qualificationRoute');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use('/api', userRoutes);
 app.use('/api', studentRoutes);
 app.use('/api', scheduleRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/', qualificationRoutes);
 
 // Sincronizar base de datos y servidor
 sequelize.authenticate()

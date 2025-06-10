@@ -90,3 +90,67 @@ exports.deleteStudentById = async (req, res) => {
         res.status(500).json({ message: 'Error al eliminar el horario', error });
     }
 }
+
+exports.getTeacherDays = async (req, res) => {
+    const docenteId = req.params.id;
+
+    try {
+        const dias = await Schedule.findAll({
+            where: {
+                docente_id: docenteId,
+                estado: 1
+            },
+            attributes: ['fecha'],
+            group: ['fecha']
+        })
+
+        const diasUnicos = dias.map(d => d.fecha);
+        res.json({ dias: diasUnicos });
+    } catch (error) {
+        console.error('Error al obtener días del docente:', error);
+        res.status(500).json({ error: 'Error al obtener días del docente' });
+    }
+}
+
+exports.getDailySchedules = async (req, res) => {
+    const docenteId = req.params.id;
+    const dia = req.query.dia;
+
+    try {
+        const horarios = await Schedule.findAll({
+            where: {
+                docente_id: docenteId,
+                fecha: dia,
+                estado: 1
+            },
+            attributes: ['id', 'hora_inicio', 'hora_fin'],
+            include: [
+                {
+                    model: Course,
+                    as: 'curso',
+                    attributes: ['nombre'],
+                },
+                {
+                    model: Grade,
+                    as: 'grado',
+                    attributes: ['id','nombre']
+                }
+            ],
+            order: [['hora_inicio', 'ASC']]
+        });
+
+        const resultado = horarios.map(h => ({
+            id: h.id,
+            hora_inicio: h.hora_inicio,
+            hora_fin: h.hora_fin,
+            curso: h.curso.nombre,
+            grado: h.grado.nombre,
+            grado_id: h.grado.id
+        }));
+
+        res.json({ horarios: resultado });
+    } catch (error) {
+        console.error('Error al obtener horarios del día:', error);
+        res.status(500).json({ error: 'Error al obtener horarios del día' });
+    }
+}
