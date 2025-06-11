@@ -62,7 +62,7 @@ exports.getOnlyTeachers = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
-    const { persona_id, username, password_hash, rol } = req.body;
+    const { persona_id, username, rol } = req.body;
 
     try {
         const user = await User.findByPk(id);
@@ -72,7 +72,6 @@ exports.updateUser = async (req, res) => {
 
         user.persona_id = persona_id;
         user.username = username;
-        user.password_hash = password_hash;
         user.rol = rol;
         await user.save();
 

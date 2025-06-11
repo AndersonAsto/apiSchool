@@ -9,9 +9,11 @@ const { Op } = require('sequelize');
 exports.createQualification = async (req, res) => {
     try {
         const { alumno_id, horario_id, nota, detalle, fecha, hora } = req.body;
+
         if (!alumno_id || !horario_id || !nota || !fecha || !hora) {
             return res.status(400).json({ message: 'Faltan datos obligatorios.' });
         }
+
         const newQualification = await Qualification.create({
             alumno_id,
             horario_id,
@@ -20,6 +22,7 @@ exports.createQualification = async (req, res) => {
             fecha,
             hora
         });
+        
         res.status(201).json(newQualification);
     } catch (error) {
         console.error('Error al crear calificación:', error);
