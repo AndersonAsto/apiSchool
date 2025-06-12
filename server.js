@@ -33,7 +33,8 @@ app.use('/api/', assistanceRoutes);
 sequelize.authenticate()
   .then(() => {
     console.log('✅ Conexión a la base de datos exitosa.');
-    return sequelize.sync({ alter: true });
+    // return sequelize.sync({ alter: true });
+    return Promise.resolve();
   })
   .then(() => {
     console.log('✅ Base de datos sincronizada.');
